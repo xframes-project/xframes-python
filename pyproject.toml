@@ -7,7 +7,7 @@ name = "xframes"
 version = "0.0.1"
 
 [tool.scikit-build]
-cmake.verbose = true
+build.verbose = true
 #cmake.source-dir = "./src"
 logging.level = "DEBUG"
 

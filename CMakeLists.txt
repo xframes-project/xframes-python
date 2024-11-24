@@ -29,6 +29,7 @@ set(APP "xframes/packages/dear-imgui/cpp/app")
 set(CMAKE_CXX_STANDARD 20)
 set(PYBIND11_NEWPYTHON ON)
 
+# find_package(Python COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
