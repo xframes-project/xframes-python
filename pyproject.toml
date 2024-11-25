@@ -11,5 +11,5 @@ build.verbose = true
 #cmake.source-dir = "./src"
 logging.level = "DEBUG"
 
-#[tool.scikit-build.cmake.define]
-#DEPS = ""
+[tool.scikit-build.cmake.define]
+CMAKE_TOOLCHAIN_FILE = "vcpkg/scripts/buildsystems/vcpkg.cmake"
