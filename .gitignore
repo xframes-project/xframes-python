@@ -163,3 +163,5 @@ cython_debug/
 
 venv
 .idea
+.vscode
+cmake-build-release-visual-studio
