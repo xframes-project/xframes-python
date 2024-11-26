@@ -7,6 +7,7 @@
 #include <GLFW/glfw3.h>
 #include <GLES3/gl3.h>
 
+#include <functional>
 #include <thread>
 #include <cstdio>
 #include <string>
@@ -31,11 +32,11 @@ namespace py = pybind11;
 using json = nlohmann::json;
 
 using OnInitCb = const std::function<void()>;
-using OnTextChangedCb = const std::function<void(int)>;
-using OnComboChangedCb = const std::function<void(int)>;
-using OnNumericValueChangedCb = const std::function<void(int)>;
-using OnBooleanValueChangedCb = const std::function<void(int)>;
-using OnMultipleNumericValuesChangedCb = const std::function<void(int)>;
+using OnTextChangedCb = const std::function<void(int, const std::string&)>;
+using OnComboChangedCb = const std::function<void(int, int)>;
+using OnNumericValueChangedCb = const std::function<void(int, float)>;
+using OnBooleanValueChangedCb = const std::function<void(int, bool)>;
+using OnMultipleNumericValuesChangedCb = const std::function<void(int, std::vector<float>)>;
 using OnClickCb = const std::function<void(int)>;
 
 template <typename T>
@@ -83,13 +84,13 @@ class Runner {
         std::string m_assetsBasePath;
         std::optional<std::string> m_rawStyleOverridesDefs;
 
-        OnInitCb m_tsfnOnInit;
-        OnTextChangedCb m_tsfnOnTextChange;
-        OnComboChangedCb m_tsfnOnComboChange;
-        OnNumericValueChangedCb m_tsfnOnNumericValueChange;
-        OnBooleanValueChangedCb m_tsfnOnBooleanValueChange;
-        OnMultipleNumericValuesChangedCb m_tsfnOnMultipleNumericValuesChange;
-        OnClickCb m_tsfnOnClick;
+        std::function<void()> m_onInit;
+        std::function<void(int, const std::string&)> m_onTextChange;
+        std::function<void(int, int)> m_onComboChange;
+        std::function<void(int, float)> m_onNumericValueChange;
+        std::function<void(int, bool)> m_onBooleanValueChange;
+        std::function<void(int, std::vector<float>)> m_onMultipleNumericValuesChange;
+        std::function<void(int)> m_onClick;
 
         static Runner* instance;
 
@@ -103,18 +104,13 @@ class Runner {
         };
 
         ~Runner() {
-            // m_tsfnOnInit.Release();
-            // m_tsfnOnTextChange.Release();
-            // m_tsfnOnComboChange.Release();
-            // m_tsfnOnNumericValueChange.Release();
-            // m_tsfnOnBooleanValueChange.Release();
-            // m_tsfnOnMultipleNumericValuesChange.Release();
-            // m_tsfnOnClick.Release();
+            
         }
 
         static void OnInit() {
             auto pRunner = getInstance();
 
+            pRunner->m_onInit();
         }
 
         static void OnTextChange(const int id, const std::string& value) {
@@ -147,20 +143,25 @@ class Runner {
         static void OnClick(int id) {
             auto pRunner = getInstance();
 
-
+            pRunner->m_onClick(id);
         }
 
-        // @see https://github.com/nodejs/node-addon-api/blob/main/doc/threadsafe_function.md
         void SetHandlers(
-            OnInitCb onInit,
-            OnTextChangedCb onTextChanged,
-            OnComboChangedCb onComboChanged,
-            OnNumericValueChangedCb onNumericValueChanged,
-            OnBooleanValueChangedCb onBooleanValueChanged,
-            OnMultipleNumericValuesChangedCb onMultipleNumericValuesChanged,
-            OnClickCb onClick
+            OnInitCb& onInit,
+            OnTextChangedCb& onTextChanged,
+            OnComboChangedCb& onComboChanged,
+            OnNumericValueChangedCb& onNumericValueChanged,
+            OnBooleanValueChangedCb& onBooleanValueChanged,
+            OnMultipleNumericValuesChangedCb& onMultipleNumericValuesChanged,
+            OnClickCb& onClick
             ) {
-
+                m_onInit = [onInit](){ onInit(); };
+                m_onTextChange = [onTextChanged](int id, const std::string& value){ onTextChanged(id, value); };
+                m_onComboChange = [onComboChanged](int id, int value){ onComboChanged(id, value); };
+                m_onNumericValueChange = [onNumericValueChanged](int id, float value){ onNumericValueChanged(id, value); };
+                m_onBooleanValueChange = [onBooleanValueChanged](int id, bool value){ onBooleanValueChanged(id, value); };
+                m_onMultipleNumericValuesChange = [onMultipleNumericValuesChanged](int id, std::vector<float> values){ onMultipleNumericValuesChanged(id, values); };
+                m_onClick = [onClick](int id){ onClick(id); };
         }
 
         void SetRawFontDefs(std::string rawFontDefs) {
