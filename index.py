@@ -1,8 +1,12 @@
 import threading
 import time
-from enum import Enum
 import json
 import xframes
+
+from enum import Enum
+
+from services import WidgetRegistrationService
+from treetraversal import ShadowNodeTraversalHelper
 
 class ImGuiCol(Enum):
     Text = 0
@@ -143,6 +147,8 @@ font_defs["defs"] = [
     for size in entry["sizes"]
 ]
 
+widget_registration_service = WidgetRegistrationService()
+shadow_node_traversal_helper = ShadowNodeTraversalHelper(widget_registration_service)
 
 def run():
     def init():
