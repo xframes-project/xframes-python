@@ -28,8 +28,6 @@ class ShadowNode:
         for child in self.children:
             if child is None:
                 continue
-            print("child")
-            print(child)
             if isinstance(child.renderable, widgetnode.WidgetNode):
                 out.append(child)
             elif len(child.children) > 0:
@@ -70,8 +68,6 @@ class ShadowNodeTraversalHelper:
             return
         
         shadow_child = component.render()
-        print("dddd")
-        print(shadow_child)
         shadow_node.children = [self.traverse_tree(shadow_child)]
         shadow_node.current_props = new_props
 
@@ -88,7 +84,7 @@ class ShadowNodeTraversalHelper:
         shadow_node.children = shadow_children
         shadow_node.current_props = new_props
         
-        self.widget_registration_service.link_children(widget_node.id, [child.id for child in shadow_node.children])
+        self.widget_registration_service.link_children(shadow_node.id, [child.id for child in shadow_node.children])
 
     def traverse_tree(self, root: widgetnode.Renderable) -> ShadowNode:
         if isinstance(root, widgetnode.BaseComponent):
@@ -123,7 +119,6 @@ class ShadowNodeTraversalHelper:
 
             return shadow_node
         else:
-            print(root)
             print("Unrecognised root")
 
 

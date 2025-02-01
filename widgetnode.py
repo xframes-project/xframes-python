@@ -66,7 +66,7 @@ def unformatted_text (text: str, style: Optional[Dict[str, Any]] = None):
     if style:
         props["style"] = style
 
-    widgetNodeFactory(WidgetTypes.UNFORMATTED_TEXT, props, [])
+    return widgetNodeFactory(WidgetTypes.UNFORMATTED_TEXT, props, [])
 
 def button (label: str, onClick: Optional[Callable] = None, style: Optional[Dict[str, Any]] = None):
     props: Dict[str, Any] = {

@@ -158,8 +158,6 @@ def start_app():
 def init():
     print("init!")
 
-    # threading.Thread(target=start_app)
-
     start_app()
 
 
