@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import List
-from basecomponent import BaseComponent
-from widgetnode import button, makeRootNode, node
+from widgetnode import button, makeRootNode, node, BaseComponent
 from rx.subject import BehaviorSubject
 
 @dataclass
@@ -33,8 +32,8 @@ def onClick():
     sampleAppState.on_next(new_state)
 
 class App(BaseComponent):
-    def __init__(self, id: int):
-        super().__init__(id, {})
+    def __init__(self):
+        super().__init__({})
 
     def render(self):
         return node([
@@ -43,8 +42,8 @@ class App(BaseComponent):
         
 
 class Root(BaseComponent):
-    def __init__(self, id: int):
-        super().__init__(id, {})
+    def __init__(self):
+        super().__init__({})
 
     def render(self):
         return makeRootNode([

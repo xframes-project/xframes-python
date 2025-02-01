@@ -1,9 +1,17 @@
-from dataclasses import dataclass, field
 from __future__ import annotations
+from dataclasses import dataclass, field
+from enum import Enum
+import json
 from rx.subject import BehaviorSubject
 from widgettypes import WidgetTypes
-from typing import Any, Callable, Dict, List, Optional
-from renderable import Renderable
+from typing import Any, Callable, Dict, List, Optional, Union
+
+class BaseComponent:
+    def __init__(self, props: Dict[str, Any]):
+        self.props = BehaviorSubject(props)
+
+    def render(self):
+        raise Exception("Must implement render method")
 
 @dataclass
 class WidgetNode:
@@ -22,6 +30,8 @@ def widgetNodeFactory(widgetType: WidgetTypes, props: Dict[str, Any], children: 
     
 
 def create_raw_childless_widget_node_with_id(id: int, node: WidgetNode) -> RawChildlessWidgetNodeWithId:
+    print(node)
+
     return RawChildlessWidgetNodeWithId(id=id, type=node.type)
 
 def makeRootNode(children: List[Renderable]):
@@ -60,3 +70,11 @@ def button (label: str, onClick: Optional[Callable] = None, style: Optional[Dict
         props["style"] = style
 
     return widgetNodeFactory(WidgetTypes.BUTTON, props, [])
+
+Renderable = Union[BaseComponent, WidgetNode]
+
+class RawChildlessWidgetNodeWithIdEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Enum):
+            return obj.value
+        return super().default(obj)

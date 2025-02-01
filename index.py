@@ -155,21 +155,21 @@ def run():
     def init():
         print("init!")
 
-        rootNode = {
-            "id": 0,
-            "type": "node",
-            "root": True
-        }
+        # rootNode = {
+        #     "id": 0,
+        #     "type": "node",
+        #     "root": True
+        # }
 
-        textNode = {
-            "id": 1,
-            "type": "unformatted-text",
-            "text": "Hello, world!"
-        }
+        # textNode = {
+        #     "id": 1,
+        #     "type": "unformatted-text",
+        #     "text": "Hello, world!"
+        # }
 
-        xframes.setElement(json.dumps(rootNode))
-        xframes.setElement(json.dumps(textNode))
-        xframes.setChildren(0, json.dumps([1]))
+        # xframes.setElement(json.dumps(rootNode))
+        # xframes.setElement(json.dumps(textNode))
+        # xframes.setChildren(0, json.dumps([1]))
 
         root = Root()
         shadowTree = shadow_node_traversal_helper.traverse_tree(root)

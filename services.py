@@ -1,10 +1,12 @@
+from dataclasses import asdict
 import json
 from threading import RLock
-from collections import defaultdict
+# from collections import defaultdict
 from typing import Any, Callable, Dict, List, Optional
 from rx.subject import ReplaySubject, BehaviorSubject
-from rx.operators import throttle
-from datetime import timedelta
+from rx.operators import debounce
+import widgetnode
+# from datetime import timedelta
 
 class WidgetRegistrationService:
     def __init__(self):
@@ -12,7 +14,7 @@ class WidgetRegistrationService:
         self.id_registration_lock = RLock()
 
         self.events_subject = ReplaySubject(buffer_size=10)
-        self.events_subject.pipe(throttle(lambda _: timedelta(milliseconds=1))).subscribe(lambda fn: fn())
+        self.events_subject.pipe(debounce(1)).subscribe(lambda fn: fn())
 
         self.widget_registry: Dict[int, Any] = {}
         self.on_click_registry = BehaviorSubject({})
@@ -53,8 +55,8 @@ class WidgetRegistrationService:
         else:
             print(f"Widget with id {widget_id} has no on_click handler")
 
-    def create_widget(self, widget: Any):
-        widget_json = json.dumps(widget)
+    def create_widget(self, widget: widgetnode.RawChildlessWidgetNodeWithId):
+        widget_json = json.dumps(asdict(widget), cls=widgetnode.RawChildlessWidgetNodeWithIdEncoder)
         self.set_element(widget_json)
 
     def patch_widget(self, widget_id: int, widget: Any):
