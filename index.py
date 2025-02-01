@@ -1,6 +1,7 @@
 import threading
 import time
 import json
+from sampleapp import Root
 import xframes
 
 from enum import Enum
@@ -169,6 +170,9 @@ def run():
         xframes.setElement(json.dumps(rootNode))
         xframes.setElement(json.dumps(textNode))
         xframes.setChildren(0, json.dumps([1]))
+
+        root = Root()
+        shadowTree = shadow_node_traversal_helper.traverse_tree(root)
 
     def on_text_changed(id, value):
         print(f"text changed, widget {id} value {value}")

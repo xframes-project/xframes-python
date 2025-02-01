@@ -1,7 +1,7 @@
 import json
 from threading import RLock
 from collections import defaultdict
-from typing import Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 from rx.subject import ReplaySubject, BehaviorSubject
 from rx.operators import throttle
 from datetime import timedelta
@@ -14,17 +14,17 @@ class WidgetRegistrationService:
         self.events_subject = ReplaySubject(buffer_size=10)
         self.events_subject.pipe(throttle(lambda _: timedelta(milliseconds=1))).subscribe(lambda fn: fn())
 
-        self.widget_registry: Dict[int, any] = {}
+        self.widget_registry: Dict[int, Any] = {}
         self.on_click_registry = BehaviorSubject({})
 
         self.last_widget_id = 0
         self.last_component_id = 0
 
-    def get_widget_by_id(self, widget_id: int) -> Optional[any]:
+    def get_widget_by_id(self, widget_id: int) -> Optional[Any]:
         with self.id_registration_lock:
             return self.widget_registry.get(widget_id)
         
-    def register_widget(self, widget_id: int, widget: any):
+    def register_widget(self, widget_id: int, widget: Any):
         with self.id_registration_lock:
             self.widget_registry[widget_id] = widget
 
@@ -53,11 +53,11 @@ class WidgetRegistrationService:
         else:
             print(f"Widget with id {widget_id} has no on_click handler")
 
-    def create_widget(self, widget: any):
+    def create_widget(self, widget: Any):
         widget_json = json.dumps(widget)
         self.set_element(widget_json)
 
-    def patch_widget(self, widget_id: int, widget: any):
+    def patch_widget(self, widget_id: int, widget: Any):
         widget_json = json.dumps(widget)
         self.patch_element(widget_id, widget_json)
 
@@ -66,11 +66,11 @@ class WidgetRegistrationService:
         self.set_children(widget_id, children_json)
 
     # These methods need work
-    def set_data(self, widget_id: int, data: any):
+    def set_data(self, widget_id: int, data: Any):
         data_json = json.dumps(data)
         self.element_internal_op(widget_id, data_json)
 
-    def append_data(self, widget_id: int, data: any):
+    def append_data(self, widget_id: int, data: Any):
         data_json = json.dumps(data)
         self.element_internal_op(widget_id, data_json)
 
@@ -78,7 +78,7 @@ class WidgetRegistrationService:
         data_json = json.dumps("")
         self.element_internal_op(widget_id, data_json)
 
-    def reset_data(self, widget_id: int, data: any):
+    def reset_data(self, widget_id: int, data: Any):
         data_json = json.dumps(data)
         self.element_internal_op(widget_id, data_json)
 

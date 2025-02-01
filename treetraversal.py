@@ -2,42 +2,14 @@ import rx
 from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, List, Callable, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 from rx import operators as ops
-from rx.subject import BehaviorSubject
 from services import WidgetRegistrationService
-import json
+from basecomponent import BaseComponent
+from widgetnode import RawChildlessWidgetNodeWithId, WidgetNode, create_raw_childless_widget_node_with_id
+from widgettypes import WidgetTypes
+from renderable import Renderable
 
-class WidgetTypes:
-    COMPONENT = "component"
-    NODE = "node"
-    UNFORMATTED_TEXT = "unformatted-text"
-    BUTTON = "button"
-
-@dataclass
-class WidgetNode:
-    type: WidgetTypes
-    props: BehaviorSubject[Dict[str, any]] = field(default_factory=lambda: BehaviorSubject({}))
-    children: BehaviorSubject[List[Renderable]] = field(default_factory=lambda: BehaviorSubject([]))
-
-@dataclass
-class RawChildlessWidgetNodeWithId:
-    id: int
-    type: WidgetTypes
-    props: Dict[str, any] = field(default_factory=dict)
-
-def create_raw_childless_widget_node_with_id(id: int, node: WidgetNode) -> RawChildlessWidgetNodeWithId:
-    return RawChildlessWidgetNodeWithId(id=id, type=node.type)
-
-class BaseComponent:
-    def __init__(self, id: int, props: Dict[str, any]):
-        self.id = id
-        self.props = props
-
-    def render(self):
-        pass
-
-Renderable = Union[BaseComponent, WidgetNode]
 
 class ShadowNode:
     def __init__(self, id: int, renderable_type: str, renderable: Renderable):
@@ -56,7 +28,7 @@ class ShadowNodeTraversalHelper:
     def __init__(self, widget_registration_service: WidgetRegistrationService):
         self.widget_registration_service = widget_registration_service
 
-    def are_props_equal(self, props1: Dict[str, any], props2: Dict[str, any]) -> bool:
+    def are_props_equal(self, props1: Dict[str, Any], props2: Dict[str, Any]) -> bool:
         return props1 == props2
 
     def subscribe_to_props_helper(self, shadow_node: ShadowNode):
