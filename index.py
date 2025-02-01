@@ -151,47 +151,38 @@ font_defs["defs"] = [
 widget_registration_service = WidgetRegistrationService()
 shadow_node_traversal_helper = ShadowNodeTraversalHelper(widget_registration_service)
 
+def start_app():
+    root = Root()
+    shadow_node_traversal_helper.traverse_tree(root)
+
+def init():
+    print("init!")
+
+    # threading.Thread(target=start_app)
+
+    start_app()
+
+
+def on_text_changed(id, value):
+    print(f"text changed, widget {id} value {value}")
+
+def on_combo_changed(id, value):
+    print(f"combo changed, widget {id} value {value}")
+
+def on_numeric_value_changed(id, value):
+    print(f"numeric value changed, widget {id} value {value}")
+
+def on_boolean_value_changed(id, value):
+    print(f"boolean value changed, widget {id} value {value}")
+
+def on_multiple_numeric_values_changed(id, values):
+    print(f"multiple numeric values changed, widget {id} value {values}")
+
+def on_click(id):
+    print(f"widget {id} clicked")
+    widget_registration_service.dispatch_on_click_event(id)
+
 def run():
-    def init():
-        print("init!")
-
-        # rootNode = {
-        #     "id": 0,
-        #     "type": "node",
-        #     "root": True
-        # }
-
-        # textNode = {
-        #     "id": 1,
-        #     "type": "unformatted-text",
-        #     "text": "Hello, world!"
-        # }
-
-        # xframes.setElement(json.dumps(rootNode))
-        # xframes.setElement(json.dumps(textNode))
-        # xframes.setChildren(0, json.dumps([1]))
-
-        root = Root()
-        shadowTree = shadow_node_traversal_helper.traverse_tree(root)
-
-    def on_text_changed(id, value):
-        print(f"text changed, widget {id} value {value}")
-
-    def on_combo_changed(id, value):
-        print(f"combo changed, widget {id} value {value}")
-
-    def on_numeric_value_changed(id, value):
-        print(f"numeric value changed, widget {id} value {value}")
-
-    def on_boolean_value_changed(id, value):
-        print(f"boolean value changed, widget {id} value {value}")
-
-    def on_multiple_numeric_values_changed(id, values):
-        print(f"multiple numeric values changed, widget {id} value {values}")
-
-    def on_click(id):
-        print(f"widget {id} clicked")
-
     xframes.init(
         "./assets", 
         json.dumps(font_defs), 

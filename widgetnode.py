@@ -58,7 +58,7 @@ def node (children: List[Renderable]):
 
     return widgetNodeFactory(WidgetTypes.NODE, props, children)
 
-def unformattedText (text: str, style: Optional[Dict[str, Any]] = None):
+def unformatted_text (text: str, style: Optional[Dict[str, Any]] = None):
     props: Dict[str, Any] = {
         "text": text
     }

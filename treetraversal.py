@@ -15,8 +15,28 @@ class ShadowNode:
         self.props_change_subscription: Optional[rx.core.Disposable] = None
         self.children_change_subscription: Optional[rx.core.Disposable] = None
 
-    # def init(self):
-        # self.subscribe_to_props(self)
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "current_props": self.current_props,
+            "children": [child.to_dict() for child in self.children]
+        }
+    
+    def get_linkable_children(self):
+        out: List[ShadowNode] = []
+
+        for child in self.children:
+            if child is None:
+                continue
+            print("child")
+            print(child)
+            if isinstance(child.renderable, widgetnode.WidgetNode):
+                out.append(child)
+            elif len(child.children) > 0:
+                out.extend(child.get_linkable_children())
+
+        return out
+
 
 class ShadowNodeTraversalHelper:
     def __init__(self, widget_registration_service: WidgetRegistrationService):
@@ -38,25 +58,31 @@ class ShadowNodeTraversalHelper:
 
     def handle_widget_node(self, widget: widgetnode.RawChildlessWidgetNodeWithId):
         if widget.type == WidgetTypes.BUTTON:
-            on_click = widget.props["on_click"]
-            if on_click:
-                self.widget_registration_service.register_on_click(widget.id, on_click)
+            onClick = widget.props["onClick"]
+            if onClick:
+                self.widget_registration_service.register_on_click(widget.id, onClick)
                 pass
             else:
-                print("Button widget must have on_click prop")
+                print("Button widget must have onClick prop")
 
     def handle_component_props_change(self, shadow_node: ShadowNode, component: widgetnode.BaseComponent, new_props):
         if self.are_props_equal(shadow_node.current_props, new_props):
             return
         
         shadow_child = component.render()
+        print("dddd")
+        print(shadow_child)
         shadow_node.children = [self.traverse_tree(shadow_child)]
         shadow_node.current_props = new_props
 
-        self.widget_registration_service.link_children(component.id, [child.id for child in shadow_node.children])
+        linkable_children = shadow_node.get_linkable_children()
+
+        self.widget_registration_service.link_children(shadow_node.id, [child.id for child in linkable_children])
 
     def handle_widget_node_props_change(self, shadow_node: ShadowNode, widget_node: widgetnode.WidgetNode, new_props):
-        self.widget_registration_service.create_widget(widget_node.id, widget_node)
+        self.widget_registration_service.create_widget(
+            widgetnode.create_raw_childless_widget_node_with_id(shadow_node.id, widget_node)
+        )
 
         shadow_children = [self.traverse_tree(child) for child in widget_node.children]
         shadow_node.children = shadow_children
@@ -67,28 +93,38 @@ class ShadowNodeTraversalHelper:
     def traverse_tree(self, root: widgetnode.Renderable) -> ShadowNode:
         if isinstance(root, widgetnode.BaseComponent):
             shadow_child = self.traverse_tree(root.render())
+
             id = self.widget_registration_service.get_next_component_id()
             shadow_node = ShadowNode(id, root)
             shadow_node.children = [shadow_child]
-            shadow_node.current_props = root.props
+            shadow_node.current_props = root.props.value
+
+            self.subscribe_to_props_helper(shadow_node)
+
+            return shadow_node
+        elif isinstance(root, widgetnode.WidgetNode):
+            id = self.widget_registration_service.get_next_widget_id()
+            raw_node = widgetnode.create_raw_childless_widget_node_with_id(id, root)
+
+            self.handle_widget_node(raw_node)
+
+            self.widget_registration_service.create_widget(raw_node)
+
+            shadow_node = ShadowNode(id, root)
+            shadow_node.children = [self.traverse_tree(child) for child in root.children.value]
+            shadow_node.current_props = root.props.value
+
+            linkable_children = shadow_node.get_linkable_children()
+
+            if len(linkable_children) > 0:
+                self.widget_registration_service.link_children(id, [child.id for child in linkable_children])
 
             self.subscribe_to_props_helper(shadow_node)
 
             return shadow_node
         else:
-            id = self.widget_registration_service.get_next_widget_id()
-            raw_node = widgetnode.create_raw_childless_widget_node_with_id(id, root)
-
-            self.widget_registration_service.create_widget(raw_node)
-
-            shadow_children = [self.traverse_tree(child) for child in root.children.value]
-            shadow_node = ShadowNode(id, root)
-            shadow_node.children = shadow_children
-            shadow_node.current_props = root.props
-
-            self.subscribe_to_props_helper(shadow_node)
-
-            return shadow_node
+            print(root)
+            print("Unrecognised root")
 
 
 

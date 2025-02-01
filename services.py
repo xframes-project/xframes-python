@@ -50,6 +50,7 @@ class WidgetRegistrationService:
     def dispatch_on_click_event(self, widget_id: int):
         on_click = self.on_click_registry.value.get(widget_id)
         if on_click:
+            print("Handling on click")
             self.events_subject.on_next(on_click)
         else:
             print(f"Widget with id {widget_id} has no on_click handler")
@@ -103,15 +104,14 @@ class WidgetRegistrationService:
         self.element_internal_op(widget_id, json.dumps(selected_index_data))
 
     def set_element(self, json_data: str):
-        print(json_data)
-
         xframes.setElement(json_data)
 
     def patch_element(self, widget_id: int, json_data: str):
         pass
 
     def set_children(self, widget_id: int, json_data: str):
-        print(json_data)
+        # print(widget_id)
+        # print(widget_id, json_data)
 
         xframes.setChildren(widget_id, json_data)
 
