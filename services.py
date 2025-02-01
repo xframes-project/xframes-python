@@ -1,12 +1,11 @@
 from dataclasses import asdict
 import json
 from threading import RLock
-# from collections import defaultdict
 from typing import Any, Callable, Dict, List, Optional
 from rx.subject import ReplaySubject, BehaviorSubject
 from rx.operators import debounce
 import widgetnode
-# from datetime import timedelta
+import xframes
 
 class WidgetRegistrationService:
     def __init__(self):
@@ -56,7 +55,7 @@ class WidgetRegistrationService:
             print(f"Widget with id {widget_id} has no on_click handler")
 
     def create_widget(self, widget: widgetnode.RawChildlessWidgetNodeWithId):
-        widget_json = json.dumps(asdict(widget), cls=widgetnode.RawChildlessWidgetNodeWithIdEncoder)
+        widget_json = json.dumps(widget.to_serializable_dict(), cls=widgetnode.RawChildlessWidgetNodeWithIdEncoder)
         self.set_element(widget_json)
 
     def patch_widget(self, widget_id: int, widget: Any):
@@ -104,13 +103,17 @@ class WidgetRegistrationService:
         self.element_internal_op(widget_id, json.dumps(selected_index_data))
 
     def set_element(self, json_data: str):
-        pass
+        print(json_data)
+
+        xframes.setElement(json_data)
 
     def patch_element(self, widget_id: int, json_data: str):
         pass
 
     def set_children(self, widget_id: int, json_data: str):
-        pass
+        print(json_data)
+
+        xframes.setChildren(widget_id, json_data)
 
     def element_internal_op(self, widget_id: int, json_data: str):
         pass

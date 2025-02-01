@@ -1,5 +1,5 @@
 from __future__ import annotations
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from enum import Enum
 import json
 from rx.subject import BehaviorSubject
@@ -25,14 +25,24 @@ class RawChildlessWidgetNodeWithId:
     type: WidgetTypes
     props: Dict[str, Any] = field(default_factory=dict)
 
+    def to_serializable_dict(self):
+        out = {
+            "id": self.id,
+            "type": self.type.value,
+        }
+
+        for key, value in self.props.items():
+            if not callable(value):
+                out[key] = value
+
+        return out
+
 def widgetNodeFactory(widgetType: WidgetTypes, props: Dict[str, Any], children: List[Renderable]):
     return WidgetNode(widgetType, BehaviorSubject(props), BehaviorSubject(children))
     
 
 def create_raw_childless_widget_node_with_id(id: int, node: WidgetNode) -> RawChildlessWidgetNodeWithId:
-    print(node)
-
-    return RawChildlessWidgetNodeWithId(id=id, type=node.type)
+    return RawChildlessWidgetNodeWithId(id=id, type=node.type, props=node.props.value)
 
 def makeRootNode(children: List[Renderable]):
     props: Dict[str, Any] = {
@@ -77,4 +87,6 @@ class RawChildlessWidgetNodeWithIdEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Enum):
             return obj.value
+        if callable(obj):
+            return None
         return super().default(obj)

@@ -66,7 +66,6 @@ class ShadowNodeTraversalHelper:
 
     def traverse_tree(self, root: widgetnode.Renderable) -> ShadowNode:
         if isinstance(root, widgetnode.BaseComponent):
-            # component = root
             shadow_child = self.traverse_tree(root.render())
             id = self.widget_registration_service.get_next_component_id()
             shadow_node = ShadowNode(id, root)
