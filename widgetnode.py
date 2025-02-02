@@ -84,6 +84,9 @@ def unformatted_text (text: str, style: Optional[WidgetStyle] = None) -> WidgetN
     return widget_node_factory(WidgetTypes.UnformattedText, props, [])
 
 def button (label: str, on_click: Optional[Callable] = None, style: Optional[WidgetStyle] = None) -> WidgetNode:
+    if on_click is not None and not callable(on_click):
+        raise TypeError("on_click must be a callable")
+    
     props = init_props_with_style(style)
 
     props["label"] = label
