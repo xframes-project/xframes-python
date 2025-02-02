@@ -86,29 +86,29 @@ class ShadowNodeTraversalHelper:
         
         self.widget_registration_service.link_children(shadow_node.id, [child.id for child in shadow_node.children])
 
-    def traverse_tree(self, root: widgetnode.Renderable) -> ShadowNode:
-        if isinstance(root, widgetnode.BaseComponent):
-            shadow_child = self.traverse_tree(root.render())
+    def traverse_tree(self, renderable: widgetnode.Renderable) -> ShadowNode:
+        if isinstance(renderable, widgetnode.BaseComponent):
+            shadow_child = self.traverse_tree(renderable.render())
 
             id = self.widget_registration_service.get_next_component_id()
-            shadow_node = ShadowNode(id, root)
+            shadow_node = ShadowNode(id, renderable)
             shadow_node.children = [shadow_child]
-            shadow_node.current_props = root.props.value
+            shadow_node.current_props = renderable.props.value
 
             self.subscribe_to_props_helper(shadow_node)
 
             return shadow_node
-        elif isinstance(root, widgetnode.WidgetNode):
+        elif isinstance(renderable, widgetnode.WidgetNode):
             id = self.widget_registration_service.get_next_widget_id()
-            raw_node = widgetnode.create_raw_childless_widget_node_with_id(id, root)
+            raw_node = widgetnode.create_raw_childless_widget_node_with_id(id, renderable)
 
             self.handle_widget_node(raw_node)
 
             self.widget_registration_service.create_widget(raw_node)
 
-            shadow_node = ShadowNode(id, root)
-            shadow_node.children = [self.traverse_tree(child) for child in root.children.value]
-            shadow_node.current_props = root.props.value
+            shadow_node = ShadowNode(id, renderable)
+            shadow_node.children = [self.traverse_tree(child) for child in renderable.children.value]
+            shadow_node.current_props = renderable.props.value
 
             linkable_children = shadow_node.get_linkable_children()
 
@@ -119,7 +119,7 @@ class ShadowNodeTraversalHelper:
 
             return shadow_node
         else:
-            print("Unrecognised root")
+            raise Exception("Unrecognised renderable")
 
 
 

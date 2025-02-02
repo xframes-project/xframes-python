@@ -1,28 +1,28 @@
 from dataclasses import dataclass
 from typing import List
-from widgetnode import button, makeRootNode, node, BaseComponent, unformatted_text
+from widgetnode import button, root_node, node, BaseComponent, unformatted_text
 from rx.subject import BehaviorSubject
 
 @dataclass
 class TodoItem:
-    Text: str
-    Done: bool
+    text: str
+    done: bool
 
 @dataclass
 class AppState:
-    TodoText: str
-    TodoItems: List[TodoItem]
+    todo_text: str
+    todo_items: List[TodoItem]
 
-sampleAppState = BehaviorSubject(AppState(TodoText="", TodoItems=[]))
+sampleAppState = BehaviorSubject(AppState(todo_text="", todo_items=[]))
 
 def onClick():
-    new_todo_item = TodoItem(Text="New Todo", Done=False)
+    new_todo_item = TodoItem(text="New Todo", done=False)
 
     current_state = sampleAppState.value
 
     new_state = AppState(
-        TodoText=current_state.TodoText,
-        TodoItems=current_state.TodoItems + [new_todo_item]
+        todo_text=current_state.todo_text,
+        todo_items=current_state.todo_items + [new_todo_item]
     )
 
     sampleAppState.on_next(new_state)
@@ -32,15 +32,15 @@ class App(BaseComponent):
         super().__init__({})
 
         self.sub = sampleAppState.subscribe(lambda latest_app_state: self.props.on_next({
-            "todo_text": latest_app_state.TodoText,
-            "todo_items": latest_app_state.TodoItems,
+            "todo_text": latest_app_state.todo_text,
+            "todo_items": latest_app_state.todo_items,
         }))
 
     def render(self):
         children = [button("Add todo", onClick)]
 
         for todo_item in self.props.value["todo_items"]:
-            text = f"{todo_item.Text} ({'done' if todo_item.Done else 'to do'})."
+            text = f"{todo_item.text} ({'done' if todo_item.done else 'to do'})."
             children.append(unformatted_text(text))
 
         return node(children)
@@ -50,6 +50,6 @@ class Root(BaseComponent):
         super().__init__({})
 
     def render(self):
-        return makeRootNode([
+        return root_node([
             App()
         ])

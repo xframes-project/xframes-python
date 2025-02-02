@@ -1,5 +1,5 @@
 from __future__ import annotations
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from enum import Enum
 import json
 from rx.subject import BehaviorSubject
@@ -37,28 +37,28 @@ class RawChildlessWidgetNodeWithId:
 
         return out
 
-def widgetNodeFactory(widgetType: WidgetTypes, props: Dict[str, Any], children: List[Renderable]):
+def widget_node_factory(widgetType: WidgetTypes, props: Dict[str, Any], children: List[Renderable]) -> WidgetNode:
     return WidgetNode(widgetType, BehaviorSubject(props), BehaviorSubject(children))
     
 
 def create_raw_childless_widget_node_with_id(id: int, node: WidgetNode) -> RawChildlessWidgetNodeWithId:
     return RawChildlessWidgetNodeWithId(id=id, type=node.type, props=node.props.value)
 
-def makeRootNode(children: List[Renderable]):
+def root_node(children: List[Renderable]) -> WidgetNode:
     props: Dict[str, Any] = {
         "root": True
     }
 
-    return widgetNodeFactory(WidgetTypes.NODE, props, children)
+    return widget_node_factory(WidgetTypes.NODE, props, children)
 
-def node (children: List[Renderable]):
+def node (children: List[Renderable]) -> WidgetNode:
     props: Dict[str, Any] = {
         "root": False
     }
 
-    return widgetNodeFactory(WidgetTypes.NODE, props, children)
+    return widget_node_factory(WidgetTypes.NODE, props, children)
 
-def unformatted_text (text: str, style: Optional[Dict[str, Any]] = None):
+def unformatted_text (text: str, style: Optional[Dict[str, Any]] = None) -> WidgetNode:
     props: Dict[str, Any] = {
         "text": text
     }
@@ -66,9 +66,9 @@ def unformatted_text (text: str, style: Optional[Dict[str, Any]] = None):
     if style:
         props["style"] = style
 
-    return widgetNodeFactory(WidgetTypes.UNFORMATTED_TEXT, props, [])
+    return widget_node_factory(WidgetTypes.UNFORMATTED_TEXT, props, [])
 
-def button (label: str, onClick: Optional[Callable] = None, style: Optional[Dict[str, Any]] = None):
+def button (label: str, onClick: Optional[Callable] = None, style: Optional[Dict[str, Any]] = None) -> WidgetNode:
     props: Dict[str, Any] = {
         "label": label
     }
@@ -79,7 +79,7 @@ def button (label: str, onClick: Optional[Callable] = None, style: Optional[Dict
     if style:
         props["style"] = style
 
-    return widgetNodeFactory(WidgetTypes.BUTTON, props, [])
+    return widget_node_factory(WidgetTypes.BUTTON, props, [])
 
 Renderable = Union[BaseComponent, WidgetNode]
 

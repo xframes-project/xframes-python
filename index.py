@@ -156,8 +156,6 @@ def start_app():
     shadow_node_traversal_helper.traverse_tree(root)
 
 def init():
-    print("init!")
-
     start_app()
 
 
@@ -177,7 +175,6 @@ def on_multiple_numeric_values_changed(id, values):
     print(f"multiple numeric values changed, widget {id} value {values}")
 
 def on_click(id):
-    print(f"widget {id} clicked")
     widget_registration_service.dispatch_on_click_event(id)
 
 def run():
