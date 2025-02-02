@@ -13,7 +13,7 @@ class WidgetRegistrationService:
         self.id_registration_lock = RLock()
 
         self.events_subject = ReplaySubject(buffer_size=10)
-        self.events_subject.pipe(debounce(1)).subscribe(lambda fn: fn())
+        self.events_subject.pipe(debounce(0.001)).subscribe(lambda fn: fn())
 
         self.widget_registry: Dict[int, Any] = {}
         self.on_click_registry = BehaviorSubject({})
