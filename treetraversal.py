@@ -55,13 +55,13 @@ class ShadowNodeTraversalHelper:
             ).subscribe(lambda new_props: self.handle_widget_node_props_change(shadow_node, shadow_node.renderable, new_props))
 
     def handle_widget_node(self, widget: widgetnode.RawChildlessWidgetNodeWithId):
-        if widget.type == WidgetTypes.BUTTON:
-            onClick = widget.props["onClick"]
-            if onClick:
-                self.widget_registration_service.register_on_click(widget.id, onClick)
+        if widget.type == WidgetTypes.Button:
+            on_click = widget.props["on_click"]
+            if on_click:
+                self.widget_registration_service.register_on_click(widget.id, on_click)
                 pass
             else:
-                print("Button widget must have onClick prop")
+                print("Button widget must have on_click prop")
 
     def handle_component_props_change(self, shadow_node: ShadowNode, component: widgetnode.BaseComponent, new_props):
         if self.are_props_equal(shadow_node.current_props, new_props):

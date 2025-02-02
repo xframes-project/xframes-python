@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List
+from theme import FontDef, StyleRules, WidgetStyle, WidgetStyleDef
 from widgetnode import button, root_node, node, BaseComponent, unformatted_text
 from rx.subject import BehaviorSubject
 
@@ -15,7 +16,7 @@ class AppState:
 
 sampleAppState = BehaviorSubject(AppState(todo_text="", todo_items=[]))
 
-def onClick():
+def on_click():
     new_todo_item = TodoItem(text="New Todo", done=False)
 
     current_state = sampleAppState.value
@@ -27,6 +28,8 @@ def onClick():
 
     sampleAppState.on_next(new_state)
 
+text_style = WidgetStyle(style=WidgetStyleDef(style=StyleRules(font=FontDef("roboto-regular", 32))))
+
 class App(BaseComponent):
     def __init__(self):
         super().__init__({})
@@ -37,11 +40,11 @@ class App(BaseComponent):
         }))
 
     def render(self):
-        children = [button("Add todo", onClick)]
+        children = [button("Add todo", on_click)]
 
         for todo_item in self.props.value["todo_items"]:
             text = f"{todo_item.text} ({'done' if todo_item.done else 'to do'})."
-            children.append(unformatted_text(text))
+            children.append(unformatted_text(text, text_style))
 
         return node(children)
 

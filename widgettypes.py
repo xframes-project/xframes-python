@@ -1,10 +1,10 @@
 from enum import Enum
 
 class WidgetTypes(Enum):
-    COMPONENT = "component"
-    NODE = "node"
-    UNFORMATTED_TEXT = "unformatted-text"
-    BUTTON = "di-button"
+    Component = "component"
+    Node = "node"
+    UnformattedText = "unformatted-text"
+    Button = "di-button"
 
     def __str__(self):
         return self.value

@@ -103,13 +103,13 @@ class WidgetRegistrationService:
         self.element_internal_op(widget_id, json.dumps(selected_index_data))
 
     def set_element(self, json_data: str):
-        xframes.setElement(json_data)
+        xframes.set_element(json_data)
 
     def patch_element(self, widget_id: int, json_data: str):
         pass
 
     def set_children(self, widget_id: int, json_data: str):
-        xframes.setChildren(widget_id, json_data)
+        xframes.set_children(widget_id, json_data)
 
     def element_internal_op(self, widget_id: int, json_data: str):
         pass

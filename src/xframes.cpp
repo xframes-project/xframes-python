@@ -476,13 +476,13 @@ PYBIND11_MODULE(xframes, m) {
     )pbdoc";
 
     m.def("init", &init);
-    m.def("setElement", &setElement);
-    m.def("patchElement", &patchElement);
-    m.def("setChildren", &setChildren);
-    m.def("appendChild", &appendChild);
-    m.def("showDebugWindow", &showDebugWindow);
-    m.def("patchStyle", &patchStyle);
-    m.def("appendTextToClippedMultiLineTextRenderer", &appendTextToClippedMultiLineTextRenderer);
+    m.def("set_element", &setElement);
+    m.def("patch_element", &patchElement);
+    m.def("set_children", &setChildren);
+    m.def("append_child", &appendChild);
+    m.def("show_debug_window", &showDebugWindow);
+    m.def("patch_style", &patchStyle);
+    m.def("append_text_to_clipped_multi_line_text_renderer", &appendTextToClippedMultiLineTextRenderer);
 
 #ifdef VERSION_INFO
     m.attr("__version__") = MACRO_STRINGIFY(VERSION_INFO);
