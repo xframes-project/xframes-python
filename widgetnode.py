@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 import json
 from rx.subject import BehaviorSubject
-from theme import NodeStyle, NodeStyleDef, WidgetStyle, WidgetStyleDef
+from theme import Edge, NodeStyle, NodeStyleDef, WidgetStyle, WidgetStyleDef
 from widgettypes import WidgetTypes
 from typing import Any, Callable, Dict, List, Optional, Union
 

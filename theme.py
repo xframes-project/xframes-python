@@ -58,11 +58,17 @@ class ImGuiCol(Enum):
     ModalWindowDimBg = 52
     COUNT = 53
 
+    def __str__(self):
+        return self.value
+
 class ImPlotScale(Enum):
     Linear = 0
     Time = 1
     Log10 = 2
     SymLog = 3
+
+    def __str__(self):
+        return self.value
 
 class ImPlotMarker(Enum):
     None_ = -1
@@ -76,6 +82,9 @@ class ImPlotMarker(Enum):
     Cross = 7
     Plus = 8
     Asterisk = 9
+
+    def __str__(self):
+        return self.value
 
 class ImGuiStyleVar(Enum):
     Alpha = 0  # float 
@@ -111,12 +120,18 @@ class ImGuiStyleVar(Enum):
     SeparatorTextAlign = 30  # ImVec2
     SeparatorTextPadding = 31  # ImVec2
 
+    def __str__(self):
+        return self.value
+
 class ImGuiDir(Enum):
     None_ = -1
     Left = 0
     Right = 1
     Up = 2
     Down = 3
+
+    def __str__(self):
+        return self.value
 
 class ImGuiHoveredFlags(IntFlag):
     None_ = 0  # "None" is a reserved keyword in Python
@@ -141,6 +156,9 @@ class ImGuiHoveredFlags(IntFlag):
     DelayShort = 1 << 15
     DelayNormal = 1 << 16
     NoSharedDelay = 1 << 17
+
+    def __str__(self):
+        return self.value
 
 HEXA = Tuple[str, float]
 
@@ -168,8 +186,8 @@ StyleColValue = Union[str, HEXA]
 StyleVarValue = Union[float, ImVec2]
 
 class Align(Enum):
-    LEFT = "left"
-    RIGHT = "right"
+    Left = "left"
+    Right = "right"
 
     def __str__(self):
         return self.value
@@ -201,11 +219,17 @@ class Direction(Enum):
     Ltr = "ltr"
     Rtl = "rtl"
 
+    def __str__(self):
+        return self.value
+
 class FlexDirection(Enum):
     Column = "column"
     ColumnReverse = "column-reverse"
     Row = "row"
     RowReverse = "row-reverse"
+
+    def __str__(self):
+        return self.value
 
 class JustifyContent(Enum):
     FlexStart = "flex-start"
@@ -214,6 +238,9 @@ class JustifyContent(Enum):
     SpaceBetween = "space-between"
     SpaceAround = "space-around"
     SpaceEvenly = "space-evenly"
+
+    def __str__(self):
+        return self.value
 
 class AlignContent(Enum):
     Auto = "auto"
@@ -225,6 +252,9 @@ class AlignContent(Enum):
     SpaceAround = "space-around"
     SpaceEvenly = "space-evenly"
 
+    def __str__(self):
+        return self.value
+
 class AlignItems(Enum):
     Auto = "auto"
     FlexStart = "flex-start"
@@ -232,6 +262,9 @@ class AlignItems(Enum):
     FlexEnd = "flex-end"
     Stretch = "stretch"
     Baseline = "baseline"
+
+    def __str__(self):
+        return self.value
 
 class AlignSelf(Enum):
     Auto = "auto"
@@ -241,24 +274,39 @@ class AlignSelf(Enum):
     Stretch = "stretch"
     Baseline = "baseline"
 
+    def __str__(self):
+        return self.value
+
 class PositionType(Enum):
     Static = "static"
     Relative = "relative"
     Absolute = "absolute"
+
+    def __str__(self):
+        return self.value
 
 class FlexWrap(Enum):
     NoWrap = "no-wrap"
     Wrap = "wrap"
     WrapReverse = "wrap-reverse"
 
+    def __str__(self):
+        return self.value
+
 class Overflow(Enum):
     Visible = "visible"
     Hidden = "hidden"
     Scroll = "scroll"
 
+    def __str__(self):
+        return self.value
+
 class Display(Enum):
     Flex = "flex"
     DisplayNone = "none"
+
+    def __str__(self):
+        return self.value
 
 class Edge(Enum):
     Left = "left"
@@ -271,10 +319,16 @@ class Edge(Enum):
     Vertical = "vertical"
     All = "all"
 
+    def __str__(self):
+        return self.value
+
 class Gutter(Enum):
     Column = "column"
     Row = "row"
     All = "all"
+
+    def __str__(self):
+        return self.value
 
 DimensionValue = Union[str, float]
 
@@ -285,10 +339,21 @@ class RoundCorners(Enum):
     BottomLeft = "bottomLeft"
     BottomRight = "bottomRight"
 
+    def __str__(self):
+        return self.value
+
 @dataclass
 class BorderStyle:
     color: StyleColValue
     thickness: Optional[float] = None
+
+    def to_dict(self):
+        out = {"color": self.color}
+
+        if self.thickness:
+            out["thickness"] = self.thickness
+
+        return out
 
 @dataclass
 class YogaStyle:
@@ -353,13 +418,13 @@ class YogaStyle:
         if self.flexBasisPercent is not None:
             out['flexBasisPercent'] = self.flexBasisPercent
         if self.position is not None:
-            out['position'] = {edge: value for edge, value in self.position.items()}
+            out['position'] = {str(edge): value for edge, value in self.position.items()}
         if self.margin is not None:
-            out['margin'] = {edge: value for edge, value in self.margin.items()}
+            out['margin'] = {str(edge): value for edge, value in self.margin.items()}
         if self.padding is not None:
-            out['padding'] = {edge: value for edge, value in self.padding.items()}
+            out['padding'] = {str(edge): value for edge, value in self.padding.items()}
         if self.gap is not None:
-            out['gap'] = {gutter: value for gutter, value in self.gap.items()}
+            out['gap'] = {str(gutter): value for gutter, value in self.gap.items()}
         if self.aspectRatio is not None:
             out['aspectRatio'] = self.aspectRatio
         if self.width is not None:
@@ -394,7 +459,7 @@ class BaseDrawStyle:
         if self.backgroundColor is not None:
             out['backgroundColor'] = self.backgroundColor
         if self.border is not None:
-            out['border'] = self.border
+            out['border'] = self.border.to_dict()
         if self.borderTop is not None:
             out['borderTop'] = self.borderTop
         if self.borderRight is not None:
@@ -428,15 +493,15 @@ class NodeStyleDef():
 
 @dataclass
 class WidgetStyleDef():
-    style: Optional[StyleRules] = None
+    style_rules: Optional[StyleRules] = None
     layout: Optional[YogaStyle] = None
     base_draw: Optional[BaseDrawStyle] = None
 
     def to_dict(self):
         out = {}
 
-        if self.style is not None:
-            out.update(self.style.to_dict())
+        if self.style_rules is not None:
+            out.update(self.style_rules.to_dict())
         if self.layout is not None:
             out.update(self.layout.to_dict())
         if self.base_draw is not None:

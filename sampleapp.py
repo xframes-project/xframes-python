@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List
-from theme import FontDef, StyleRules, WidgetStyle, WidgetStyleDef
+from theme import Edge, FontDef, StyleRules, WidgetStyle, WidgetStyleDef, YogaStyle
 from widgetnode import button, root_node, node, BaseComponent, unformatted_text
 from rx.subject import BehaviorSubject
 
@@ -28,7 +28,26 @@ def on_click():
 
     sampleAppState.on_next(new_state)
 
-text_style = WidgetStyle(style=WidgetStyleDef(style=StyleRules(font=FontDef("roboto-regular", 32))))
+text_style = WidgetStyle(
+    style=WidgetStyleDef(
+        style_rules=StyleRules(
+            font=FontDef("roboto-regular", 32)
+        )
+    )
+)
+
+button_style = WidgetStyle(
+    style=WidgetStyleDef(
+        style_rules=StyleRules(
+            font=FontDef("roboto-regular", 32)
+        ),
+        layout=YogaStyle(
+            width="50%", 
+            padding={Edge.Vertical: 10}, 
+            margin={Edge.Left: 140}
+        )
+    )
+)
 
 class App(BaseComponent):
     def __init__(self):
@@ -40,7 +59,7 @@ class App(BaseComponent):
         }))
 
     def render(self):
-        children = [button("Add todo", on_click)]
+        children = [button("Add todo", on_click, button_style)]
 
         for todo_item in self.props.value["todo_items"]:
             text = f"{todo_item.text} ({'done' if todo_item.done else 'to do'})."
