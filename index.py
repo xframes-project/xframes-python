@@ -1,64 +1,12 @@
 import threading
 import time
-from enum import Enum
 import json
+from logger import get_logger
+from sampleapp import Root
 import xframes
-
-class ImGuiCol(Enum):
-    Text = 0
-    TextDisabled = 1
-    WindowBg = 2
-    ChildBg = 3
-    PopupBg = 4
-    Border = 5
-    BorderShadow = 6
-    FrameBg = 7
-    FrameBgHovered = 8
-    FrameBgActive = 9
-    TitleBg = 10
-    TitleBgActive = 11
-    TitleBgCollapsed = 12
-    MenuBarBg = 13
-    ScrollbarBg = 14
-    ScrollbarGrab = 15
-    ScrollbarGrabHovered = 16
-    ScrollbarGrabActive = 17
-    CheckMark = 18
-    SliderGrab = 19
-    SliderGrabActive = 20
-    Button = 21
-    ButtonHovered = 22
-    ButtonActive = 23
-    Header = 24
-    HeaderHovered = 25
-    HeaderActive = 26
-    Separator = 27
-    SeparatorHovered = 28
-    SeparatorActive = 29
-    ResizeGrip = 30
-    ResizeGripHovered = 31
-    ResizeGripActive = 32
-    Tab = 33
-    TabHovered = 34
-    TabActive = 35
-    TabUnfocused = 36
-    TabUnfocusedActive = 37
-    PlotLines = 38
-    PlotLinesHovered = 39
-    PlotHistogram = 40
-    PlotHistogramHovered = 41
-    TableHeaderBg = 42
-    TableBorderStrong = 43
-    TableBorderLight = 44
-    TableRowBg = 45
-    TableRowBgAlt = 46
-    TextSelectedBg = 47
-    DragDropTarget = 48
-    NavHighlight = 49
-    NavWindowingHighlight = 50
-    NavWindowingDimBg = 51
-    ModalWindowDimBg = 52
-    COUNT = 53
+from services import WidgetRegistrationService
+from theme import ImGuiCol
+from treetraversal import ShadowNodeTraversalHelper
 
 theme2_colors = {
     "darkestGrey": "#141f2c",
@@ -143,45 +91,38 @@ font_defs["defs"] = [
     for size in entry["sizes"]
 ]
 
+widget_registration_service = WidgetRegistrationService()
+shadow_node_traversal_helper = ShadowNodeTraversalHelper(widget_registration_service)
+logger = get_logger()
+
+def start_app():
+    root = Root()
+    shadow_node_traversal_helper.traverse_tree(root)
+
+def init():
+    start_app()
+
+
+def on_text_changed(id, value):
+    logger.debug(f"text changed, widget {id} value {value}")
+
+def on_combo_changed(id, value):
+    logger.debug(f"combo changed, widget {id} value {value}")
+
+def on_numeric_value_changed(id, value):
+    logger.debug(f"numeric value changed, widget {id} value {value}")
+
+def on_boolean_value_changed(id, value):
+    logger.debug(f"boolean value changed, widget {id} value {value}")
+
+def on_multiple_numeric_values_changed(id, values):
+    logger.debug(f"multiple numeric values changed, widget {id} value {values}")
+
+def on_click(id):
+    logger.debug("Clicked")
+    widget_registration_service.dispatch_on_click_event(id)
 
 def run():
-    def init():
-        print("init!")
-
-        rootNode = {
-            "id": 0,
-            "type": "node",
-            "root": True
-        }
-
-        textNode = {
-            "id": 1,
-            "type": "unformatted-text",
-            "text": "Hello, world!"
-        }
-
-        xframes.setElement(json.dumps(rootNode))
-        xframes.setElement(json.dumps(textNode))
-        xframes.setChildren(0, json.dumps([1]))
-
-    def on_text_changed(id, value):
-        print(f"text changed, widget {id} value {value}")
-
-    def on_combo_changed(id, value):
-        print(f"combo changed, widget {id} value {value}")
-
-    def on_numeric_value_changed(id, value):
-        print(f"numeric value changed, widget {id} value {value}")
-
-    def on_boolean_value_changed(id, value):
-        print(f"boolean value changed, widget {id} value {value}")
-
-    def on_multiple_numeric_values_changed(id, values):
-        print(f"multiple numeric values changed, widget {id} value {values}")
-
-    def on_click(id):
-        print(f"widget {id} clicked")
-
     xframes.init(
         "./assets", 
         json.dumps(font_defs), 

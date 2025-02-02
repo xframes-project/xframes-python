@@ -6,6 +6,16 @@ build-backend = "scikit_build_core.build"
 name = "xframes"
 version = "0.0.1"
 
+[tool.poetry]
+name = "xframes"
+version = "0.0.1"
+description = "A basic Python implementation for XFrames"
+authors = ["Andrea Mancuso <and.mancuso@googlemail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.6" 
+rx = "^3.2.0"
+
 [tool.scikit-build]
 build.verbose = true
 #cmake.source-dir = "./src"
