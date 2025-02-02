@@ -1,18 +1,20 @@
 from __future__ import annotations
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
 import json
 from rx.subject import BehaviorSubject
-from theme import Edge, NodeStyle, NodeStyleDef, WidgetStyle, WidgetStyleDef
+from theme import NodeStyle, NodeStyleDef, WidgetStyle, WidgetStyleDef
 from widgettypes import WidgetTypes
 from typing import Any, Callable, Dict, List, Optional, Union
 
-class BaseComponent:
+class BaseComponent(ABC):
     def __init__(self, props: Dict[str, Any]):
         self.props = BehaviorSubject(props)
 
+    @abstractmethod
     def render(self):
-        raise Exception("Must implement render method")
+        raise NotImplementedError
 
 @dataclass
 class WidgetNode:

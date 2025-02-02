@@ -461,13 +461,13 @@ class BaseDrawStyle:
         if self.border is not None:
             out['border'] = self.border.to_dict()
         if self.borderTop is not None:
-            out['borderTop'] = self.borderTop
+            out['borderTop'] = self.borderTop.to_dict()
         if self.borderRight is not None:
-            out['borderRight'] = self.borderRight
+            out['borderRight'] = self.borderRight.to_dict()
         if self.borderBottom is not None:
-            out['borderBottom'] = self.borderBottom
+            out['borderBottom'] = self.borderBottom.to_dict()
         if self.borderLeft is not None:
-            out['borderLeft'] = self.borderLeft
+            out['borderLeft'] = self.borderLeft.to_dict()
         if self.rounding is not None:
             out['rounding'] = self.rounding
         if self.roundCorners is not None:

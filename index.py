@@ -1,6 +1,7 @@
 import threading
 import time
 import json
+from logger import get_logger
 from sampleapp import Root
 import xframes
 from services import WidgetRegistrationService
@@ -92,6 +93,7 @@ font_defs["defs"] = [
 
 widget_registration_service = WidgetRegistrationService()
 shadow_node_traversal_helper = ShadowNodeTraversalHelper(widget_registration_service)
+logger = get_logger()
 
 def start_app():
     root = Root()
@@ -102,21 +104,22 @@ def init():
 
 
 def on_text_changed(id, value):
-    print(f"text changed, widget {id} value {value}")
+    logger.debug(f"text changed, widget {id} value {value}")
 
 def on_combo_changed(id, value):
-    print(f"combo changed, widget {id} value {value}")
+    logger.debug(f"combo changed, widget {id} value {value}")
 
 def on_numeric_value_changed(id, value):
-    print(f"numeric value changed, widget {id} value {value}")
+    logger.debug(f"numeric value changed, widget {id} value {value}")
 
 def on_boolean_value_changed(id, value):
-    print(f"boolean value changed, widget {id} value {value}")
+    logger.debug(f"boolean value changed, widget {id} value {value}")
 
 def on_multiple_numeric_values_changed(id, values):
-    print(f"multiple numeric values changed, widget {id} value {values}")
+    logger.debug(f"multiple numeric values changed, widget {id} value {values}")
 
 def on_click(id):
+    logger.debug("Clicked")
     widget_registration_service.dispatch_on_click_event(id)
 
 def run():

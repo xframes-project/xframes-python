@@ -1,5 +1,6 @@
 from __future__ import annotations
 import rx
+from rx.core.typing import Disposable
 from typing import Any, Dict, List, Optional
 from rx import operators as ops
 from services import WidgetRegistrationService
@@ -12,8 +13,8 @@ class ShadowNode:
         self.renderable = renderable
         self.current_props = {}
         self.children: List[ShadowNode] = []
-        self.props_change_subscription: Optional[rx.core.Disposable] = None
-        self.children_change_subscription: Optional[rx.core.Disposable] = None
+        self.props_change_subscription: Optional[Disposable] = None
+        self.children_change_subscription: Optional[Disposable] = None
 
     def to_dict(self):
         return {
@@ -23,17 +24,20 @@ class ShadowNode:
         }
     
     def get_linkable_children(self):
-        out: List[ShadowNode] = []
-
-        for child in self.children:
-            if child is None:
-                continue
-            if isinstance(child.renderable, widgetnode.WidgetNode):
-                out.append(child)
-            elif len(child.children) > 0:
-                out.extend(child.get_linkable_children())
-
-        return out
+            """Returns a list of child nodes that can be linked in the widget tree."""
+            out: List[ShadowNode] = []
+        
+            for child in self.children:
+                if not child:
+                    continue
+                if not child.renderable:
+                    continue
+                if isinstance(child.renderable, widgetnode.WidgetNode):
+                    out.append(child)
+                elif len(child.children) > 0:
+                    out.extend(child.get_linkable_children())
+        
+            return out
 
 
 class ShadowNodeTraversalHelper:
@@ -44,6 +48,9 @@ class ShadowNodeTraversalHelper:
         return props1 == props2
 
     def subscribe_to_props_helper(self, shadow_node: ShadowNode):
+        if shadow_node.props_change_subscription:
+            shadow_node.props_change_subscription.dispose()
+
         if isinstance(shadow_node.renderable, widgetnode.BaseComponent):
             component = shadow_node.renderable
             shadow_node.props_change_subscription = component.props.pipe(

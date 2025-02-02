@@ -10,7 +10,8 @@ import xframes
 class WidgetRegistrationService:
     def __init__(self):
         self.id_generator_lock = RLock()
-        self.id_registration_lock = RLock()
+        self.id_widget_registration_lock = RLock()
+        self.id_event_registration_lock = RLock()
 
         self.events_subject = ReplaySubject(buffer_size=10)
         self.events_subject.pipe(debounce(0.001)).subscribe(lambda fn: fn())
@@ -22,11 +23,11 @@ class WidgetRegistrationService:
         self.last_component_id = 0
 
     def get_widget_by_id(self, widget_id: int) -> Optional[Any]:
-        with self.id_registration_lock:
+        with self.id_widget_registration_lock:
             return self.widget_registry.get(widget_id)
         
     def register_widget(self, widget_id: int, widget: Any):
-        with self.id_registration_lock:
+        with self.id_widget_registration_lock:
             self.widget_registry[widget_id] = widget
 
     def get_next_widget_id(self) -> int:
@@ -42,10 +43,10 @@ class WidgetRegistrationService:
             return component_id
         
     def register_on_click(self, widget_id: int, on_click: Callable):
-        # We should probably have a mutex here too
-        new_registry = self.on_click_registry.value.copy()
-        new_registry[widget_id] = on_click
-        self.on_click_registry.on_next(new_registry)
+        with self.id_event_registration_lock:
+            new_registry = self.on_click_registry.value.copy()
+            new_registry[widget_id] = on_click
+            self.on_click_registry.on_next(new_registry)
 
     def dispatch_on_click_event(self, widget_id: int):
         on_click = self.on_click_registry.value.get(widget_id)

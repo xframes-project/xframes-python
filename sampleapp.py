@@ -53,7 +53,7 @@ class App(BaseComponent):
     def __init__(self):
         super().__init__({})
 
-        self.sub = sampleAppState.subscribe(lambda latest_app_state: self.props.on_next({
+        self.app_state_subscription = sampleAppState.subscribe(lambda latest_app_state: self.props.on_next({
             "todo_text": latest_app_state.todo_text,
             "todo_items": latest_app_state.todo_items,
         }))
@@ -66,6 +66,9 @@ class App(BaseComponent):
             children.append(unformatted_text(text, text_style))
 
         return node(children)
+    
+    def dispose(self):
+        self.app_state_subscription.dispose()
 
 class Root(BaseComponent):
     def __init__(self):
